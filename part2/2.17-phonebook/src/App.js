@@ -39,6 +39,11 @@ const App = () => {
     setNewNumber('')
   }
 
+  const deleteHandlerOf = (id) => {
+    personService.deletePersonById(id)
+      .then(setPersons(persons.filter( p => p.id !== id)))
+  }
+
   const nameChangeHandler = (event) => {
     setNewName(event.target.value)
   }
@@ -64,15 +69,24 @@ const App = () => {
         <div><button type="submit" onClick={saveHandler}>add</button></div>
       </form>
       <h2>Numbers</h2>
-      <Persons persons={persons.filter(filterFunc)}/>
+      <table><tbody>
+        {persons.map(p => <Person person={p} key={p.name} delHandler={() => deleteHandlerOf(p.id)} />)}
+      </tbody></table>
     </div>
   )
 }
 
 const Filter = ({ value, onChange }) => (<div>Filter: <input value={value} onChange={onChange} /></div>)
 
-const Persons = ({ persons }) => <table><tbody>{persons.map(p => <Person person={p} key={p.name} />)}</tbody></table>
+const Persons = ({ persons, delHandler }) => 
+  <table><tbody>
+    {persons.map(p => <Person person={p} key={p.name} delHandler={delHandler} />)}
+  </tbody></table>
 
-const Person = ({person}) => (<tr><td>{person.name}</td><td>{person.number}</td></tr>)
+const Person = ({ person, delHandler }) =>
+  <tr>
+    <td><button type="submit" onClick={delHandler}>delete</button></td>
+    <td>{person.name}</td><td>{person.number}</td><td>{person.id}</td>
+  </tr>
 
 export default App

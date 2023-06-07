@@ -16,4 +16,9 @@ const update = (id, newObject) => {
         .then(response => response.data)
 }
 
-export default { getAll, create, update}
+const deletePersonById = (id) => {
+    return axios.delete(`${DEV_SERVER}/${id}`)
+        .then(response => response.data)
+}
+
+export default { getAll, create, update, deletePersonById}
