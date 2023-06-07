@@ -1,20 +1,17 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-
   const [filterKeyword, setFilterKeyword] = useState("")
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
+  const DEV_SERVER = 'http://localhost:3001/persons'
+
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
+    personService.getAll()
+      .then(data => setPersons(data))
   }
 
   useEffect(hook, [])
@@ -23,16 +20,20 @@ const App = () => {
     event.preventDefault()
     console.log('clicked', event)
 
-    const nameObj = { name: newName, number: newNumber}
+    const newPerson = { name: newName, number: newNumber}
 
     // check for dupe
-    const duplicates = persons.filter(person => person.name.toLowerCase() === nameObj.name.toLowerCase())
+    const duplicates = persons.filter(person => person.name.toLowerCase() === newPerson.name.toLowerCase())
     if (duplicates.length > 0) {
-      alert(`${nameObj.name} is already in Phonebook`)
+      alert(`${newPerson.name} is already in Phonebook`)
     }
     else
     {
-      setPersons(persons.concat(nameObj))
+      // saving/post
+      // note: POSTing appends to json []
+      // note: id field automatically created by JSON server
+      personService.create(newPerson)
+        .then(data => setPersons(persons.concat(data)))
     }
     setNewName('')
     setNewNumber('')
