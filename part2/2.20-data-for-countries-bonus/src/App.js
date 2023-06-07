@@ -6,6 +6,7 @@ function App() {
   const [currCountry, setCurrCountry ] = useState("")
   const [countries, setCountries ] = useState([])
   const [filterKeyword, setFilterKeyword] = useState("")
+  const [debugMsg, setDebugMsg ] = useState(null)
 
   const hook = () => {
     countriesService.getAll()
@@ -20,21 +21,24 @@ function App() {
     setFilterKeyword(event.target.value)
   }
 
+  const countryButtonHandler = (cname) => {
+    setFilterKeyword(cname)
+  }
+
   const countryFilter = (country) => country.name.common.toLowerCase().includes(filterKeyword.toLocaleLowerCase())
 
   return (
     <div className="App">
       <Filter value={filterKeyword} onChange={filterKeywordHandler}/>
-      <FilterResult countries={countries.filter(countryFilter)}/>
-      <Country name={!currCountry? "" : currCountry.name.common}/>
+      <FilterResult countries={countries.filter(countryFilter)} btnhandler={(x) => countryButtonHandler(x)} />
     </div>
   );
 }
 
-const Country = ({name, country}) => {
+const Country = ({ country, btnhandler }) => {
   if(!country) {return null}
   
-  return (<div>{name}{country.name.common}</div>)
+  return (<div>{country.name.common} <button type="submit" onClick={() => btnhandler(country.name.common)}>show</button></div>)
 }
 
 const CountryFull = ({country}) => {
@@ -48,10 +52,9 @@ const CountryFull = ({country}) => {
   )
 }
 
-
 const Filter = ({ value, onChange }) => (<div>Filter: <input value={value} onChange={onChange} /></div>)
 
-const FilterResult = ({countries}) => {
+const FilterResult = ({countries, btnhandler}) => {
   console.log("filterresult:", countries, countries.length)
   if(!countries) {return null}
 
@@ -59,7 +62,7 @@ const FilterResult = ({countries}) => {
 
   if(countries.length == 1) {return <div><CountryFull country={countries[0]}/></div>}
 
-  return <div>{countries.map( c => <Country country={c} key={c.cca2}/>)}</div>
+  return <div>{countries.map( c => <Country country={c} key={c.cca2} btnhandler={(x) => btnhandler(x)}/>)}</div>
 }
 
 const Languages = ({country}) => {
@@ -74,6 +77,12 @@ const Languages = ({country}) => {
       <img src={country.flags.png}/>
     </>
   )
+}
+
+const DebugMsg = ({msg}) => {
+  if(!msg) {return null}
+
+  return <div class="debug">{msg}</div>
 }
 
 export default App;
