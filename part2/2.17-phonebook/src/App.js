@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
+import './App.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [filterKeyword, setFilterKeyword] = useState("")
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errMessage, setErrMessage] = useState(null)
 
   const DEV_SERVER = 'http://localhost:3001/persons'
 
@@ -33,6 +36,11 @@ const App = () => {
         let updatedPerson = {...duPerson, number: newNumber}
         personService.update(updatedPerson.id, updatedPerson)
           .then(setPersons(persons.map(p => p.id === updatedPerson.id ? updatedPerson : p)))
+          .catch(err => {
+            setErrMessage(`${updatedPerson.name} was not found in server`)
+            setTimeout(() => setErrMessage(null), 5000)
+            setSuccessMessage(null)
+          })
       }
     }
     else {
@@ -41,6 +49,7 @@ const App = () => {
       // note: id field automatically created by JSON server
       personService.create(newPerson)
         .then(data => setPersons(persons.concat(data)))
+        .then(setSuccessMessage(`${newPerson.name} added`))
     }
     setNewName('')
     setNewNumber('')
@@ -69,6 +78,8 @@ const App = () => {
 
   return (
     <div>
+      <NotifyError message={errMessage} />
+      <NotifySuccess message={successMessage} />
       <h2>Phonebook</h2>
       <Filter value={filterKeyword} onChange={filterKeywordHandler} />
       <h2>Add New</h2>
@@ -97,5 +108,15 @@ const Person = ({ person, delHandler }) =>
     <td><button type="submit" onClick={delHandler}>delete</button></td>
     <td>{person.name}</td><td>{person.number}</td><td>{person.id}</td>
   </tr>
+
+const NotifyError = ({ message }) => {
+  if (message === null) { return null }
+  return (<div className="error"> {message}</div>)
+}
+
+const NotifySuccess = ({ message }) => {
+  if (message === null) { return null }
+  return (<div className="success"> {message}</div>)
+}
 
 export default App
