@@ -24,11 +24,18 @@ const App = () => {
 
     // check for dupe
     const duplicates = persons.filter(person => person.name.toLowerCase() === newPerson.name.toLowerCase())
+    console.log(duplicates)
     if (duplicates.length > 0) {
-      alert(`${newPerson.name} is already in Phonebook`)
+      
+      let duPerson = persons.find(person => person.name.toLowerCase() === newPerson.name.toLowerCase());
+
+      if (window.confirm(`${duPerson.name} is already in phonebook. Update phone number?`)) {
+        let updatedPerson = {...duPerson, number: newNumber}
+        personService.update(updatedPerson.id, updatedPerson)
+          .then(setPersons(persons.map(p => p.id === updatedPerson.id ? updatedPerson : p)))
+      }
     }
-    else
-    {
+    else {
       // saving/post
       // note: POSTing appends to json []
       // note: id field automatically created by JSON server
@@ -40,8 +47,10 @@ const App = () => {
   }
 
   const deleteHandlerOf = (id) => {
-    personService.deletePersonById(id)
-      .then(setPersons(persons.filter( p => p.id !== id)))
+    if(window.confirm(`Do you want to delete ${persons.find(p => p.id === id).name}?`)) {
+      personService.deletePersonById(id)
+        .then(setPersons(persons.filter( p => p.id !== id)))
+    }
   }
 
   const nameChangeHandler = (event) => {
