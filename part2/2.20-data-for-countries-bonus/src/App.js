@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react'
 import './App.css';
 import countriesService from "./services/countries"
 import weatherService from "./services/weather"
+import weather from './services/weather';
 
 function App() {
   const [currCountry, setCurrCountry ] = useState("")
@@ -89,16 +90,22 @@ const DebugMsg = ({msg}) => {
 const Weather = ({ country }) => {
   const [weatherData, setWeatherData] = useState(null)
 
-  weatherService.getWeather(country).then(data => setWeatherData(data))
+  const weatherhook = () => {
+    weatherService.getWeather(country)
+    .then(data => setWeatherData(data))
+  }
+
+  useEffect(weatherhook, [country])
 
   console.log('weather', weatherData)
 
+  if(!weatherData) return null;
+
   return (
     <div>
-      <h2>Weather in </h2>
-      <div>Temperature</div>
+      <h2>Weather in {country.name.common}</h2>
+      <div>Temperature: {weatherData.current.weather.temp}</div>
     // icon
-      <div>Wind: </div>
     </div>
 
   )
