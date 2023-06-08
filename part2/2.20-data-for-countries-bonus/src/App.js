@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react'
 import './App.css';
 import countriesService from "./services/countries"
+import weatherService from "./services/weather"
 
 function App() {
   const [currCountry, setCurrCountry ] = useState("")
@@ -45,9 +46,10 @@ const CountryFull = ({country}) => {
   return (
     <>
       <h1>{country.name.common}</h1>
-      <div>capital: {country.capital.toString()}</div>
+      <div>capital: {country.capital}</div>
       <div>area: {country.area}</div>
       <Languages country={country}/>
+      <Weather country={country}/>
     </>
   )
 }
@@ -81,8 +83,25 @@ const Languages = ({country}) => {
 
 const DebugMsg = ({msg}) => {
   if(!msg) {return null}
-
   return <div class="debug">{msg}</div>
 }
+
+const Weather = ({ country }) => {
+  const [weatherData, setWeatherData] = useState(null)
+
+  weatherService.getWeather(country).then(data => setWeatherData(data))
+
+  console.log('weather', weatherData)
+
+  return (
+    <div>
+      <h2>Weather in </h2>
+      <div>Temperature</div>
+    // icon
+      <div>Wind: </div>
+    </div>
+
+  )
+} 
 
 export default App;
