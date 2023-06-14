@@ -6,17 +6,21 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose --silent=false"
   },
   "author": "Chris",
   "license": "MIT",
   "devDependencies": {
     "dotenv": "^16.1.4",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.22"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "mongoose": "^7.2.4"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
