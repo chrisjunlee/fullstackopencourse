@@ -10,8 +10,6 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
   const [errMessage, setErrMessage] = useState(null)
 
-  const DEV_SERVER = 'http://localhost:3001/persons'
-
   const hook = () => {
     personService.getAll()
       .then(data => setPersons(data))
@@ -37,8 +35,8 @@ const App = () => {
         personService.update(updatedPerson.id, updatedPerson)
           .then(setPersons(persons.map(p => p.id === updatedPerson.id ? updatedPerson : p)))
           .catch(err => {
-            setErrMessage(`${updatedPerson.name} was not found in server`)
-            setTimeout(() => setErrMessage(null), 5000)
+            setErrMessage(err.response.data.error)
+            setTimeout(() => setErrMessage(null), 2000)
             setSuccessMessage(null)
           })
       }
@@ -50,6 +48,10 @@ const App = () => {
       personService.create(newPerson)
         .then(data => setPersons(persons.concat(data)))
         .then(setSuccessMessage(`${newPerson.name} added`))
+        .catch(err => {
+          setErrMessage(err.response.data.error)
+          setTimeout(() => setErrMessage(null), 2000)
+        })
     }
     setNewName('')
     setNewNumber('')

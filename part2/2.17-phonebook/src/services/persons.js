@@ -1,7 +1,8 @@
 import axios from 'axios'
-const DEV_SERVER = 'http://localhost:3001/persons'
+const DEV_SERVER = '/api/persons'
 
 const getAll = () => {
+    console.log('baseurl', DEV_SERVER)
     return axios.get(DEV_SERVER)
         .then(response => response.data)
 }
