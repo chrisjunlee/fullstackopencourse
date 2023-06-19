@@ -124,8 +124,35 @@ test('4.11: Missing likes value assigns default 0', async () => {
 
 // Exercise 4.12: missing title/url, 400 bad request
 test('4.12: Missing title/url returns 400 Bad Request', async () => {
-    
+    const newBlog = {
+        "author": "TestAuthor",
+        "url": "TestURL"
+    }
 
+    await api.post("/api/blogs")
+        .send(newBlog)
+        .expect(400)
+})
+
+// Exercise 4.13: DELETE test
+test('4.13: DELETE test', async () => {
+    const blogs = await api.get('/api/blogs')
+    const blogId = blogs.body[0].id 
+
+    await api
+        .delete(`/api/blogs/${blogId}`)
+        .expect(204)
+})
+
+// Exercise 4.14: PUT/Update test
+test('4.14: PUT/Update test', async () => {
+    const blogs = await api.get('/api/blogs')
+    const blogId = blogs.body[0].id 
+    const newTitle = "newTitle"
+
+    await api.put(`/api/blogs/${blogId}`)
+        .send({"title": newTitle})
+        .expect(200)
 })
 
 afterAll(async () => {

@@ -6,10 +6,42 @@ blogRouter.get('/', async (request, response) => {
     return response.json(blogs)
 })
 
+blogRouter.get('/:id', async (req, res, next) => {
+    try
+    {
+        const blog = await Blog.findById(req.params.id)
+        res.json(blog) 
+    } catch (ex) {
+        next(ex)
+    }
+})
+
 blogRouter.post('/', async (request, response) => {
+    
+    if(!request.body.title) {
+        return response.status(400).json( {error: "Title Missing"})
+    }
+
+    if (!request.body.url) {
+        return response.status(400).json({ error: "Url Missing" })
+    }
+    
     const blog = new Blog(request.body)
+
     const result = await blog.save()
     response.status(201).json(result)
+})
+
+blogRouter.delete('/:id', async (req, res) => {
+    console.log('Deleting:', req.params.id)
+    await Blog.findByIdAndDelete(req.params.id)
+    res.status(204).end()
+})
+
+blogRouter.put('/:id', async (req, res) => {
+    console.log('Updating Blog', req.body)
+    const updatedPerson = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, context: 'query' })
+    res.status(200).json(updatedPerson)
 })
 
 module.exports = blogRouter
