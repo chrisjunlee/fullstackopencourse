@@ -70,16 +70,17 @@ test('Blogs returned as json', async () => {
         .expect('Content-Type', /application\/json/) // regex syntax '/../'
 })
 
-test('Blogs id field is "id"', async () => {
-    const res = await api.get('/api/blogs')
-
-    expect(res).toBeDefined()
-})
-
 test('Blog count is 2', async () => {
     const res = await api.get('/api/blogs')
     expect(res.body).toHaveLength(2)
 })
+
+test('Blogs id field is "id"', async () => {
+    const res = await api.get('/api/blogs')
+    expect(res.body[0].id).toBeDefined()
+})
+
+
 
 afterAll(async () => {
     await mongoose.connection.close()
