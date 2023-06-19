@@ -75,12 +75,58 @@ test('Blog count is 2', async () => {
     expect(res.body).toHaveLength(2)
 })
 
-test('Blogs id field is "id"', async () => {
+// Exercise 4.9
+test('4.9: Blogs id field is "id"', async () => {
     const res = await api.get('/api/blogs')
     expect(res.body[0].id).toBeDefined()
 })
 
+// Exercise 4.10: HTTP POST creates new post
+test('4.10: Blogs id field is "id"', async () => {
+    const newBlog = {
+        "title": "TestTitle",
+        "author": "TestAuthor",
+        "url": "TestURL",
+        "likes": 100
+    }
 
+    let res = await api.get('/api/blogs')
+    const currCount = res.body.length
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    res = await api.get('/api/blogs')
+    expect(res.body).toHaveLength(currCount + 1)
+})
+
+// Exercise 4.11: missing likes property, default value
+test('4.11: Missing likes value assigns default 0', async () => {
+    const newBlog = {
+        "title": "TestTitle",
+        "author": "TestAuthor",
+        "url": "TestURL"
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+
+    const postedBlog = await Blog.findOne({ "title": "TestTitle"})
+    console.log('posted:', postedBlog)
+    expect(postedBlog.likes).toBeDefined()
+    expect(postedBlog.likes).toBe(0)
+})
+
+// Exercise 4.12: missing title/url, 400 bad request
+test('4.12: Missing title/url returns 400 Bad Request', async () => {
+    
+
+})
 
 afterAll(async () => {
     await mongoose.connection.close()
