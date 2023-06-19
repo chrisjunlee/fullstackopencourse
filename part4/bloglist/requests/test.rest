@@ -4,15 +4,15 @@ GET http://localhost:3003/api/blogs
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
 
-{   "title": "TestTitle",
-    "author": "TestAuthor",
+{   "title": "TestTitle2",
+    "author": "TestAuthor2",
     "url": "TestURL",
     "likes": 100
 }
 
 
 ###
-PUT http://localhost:3003/api/persons/648670582cd5daaf075498de HTTP/1.1
+PUT http://localhost:3003/api/blogs/648670582cd5daaf075498de HTTP/1.1
 content-type: application/json
 
 {
