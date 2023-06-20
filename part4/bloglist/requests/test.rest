@@ -1,5 +1,6 @@
 GET http://localhost:3003/api/blogs
-
+###
+GET http://localhost:3003/api/users 
 ###
 GET http://localhost:3003/api/blogs/648e6a1e029ebac163c27823
 
@@ -7,14 +8,14 @@ GET http://localhost:3003/api/blogs/648e6a1e029ebac163c27823
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
 
-{   "title": "TestTitle2",
+{   "title": "TestTitlea",
     "author": "TestAuthor2",
     "url": "TestURL",
     "likes": 100
 }
 
 ###
-DELETE http://localhost:3003/api/blogs/648fbf425b8d7c7668b072ad HTTP/1.1
+DELETE http://localhost:3003/api/blogs/nuke HTTP/1.1
 
 ###
 PUT http://localhost:3003/api/blogs/648e6a1e029ebac163c27823 HTTP/1.1
@@ -31,4 +32,25 @@ content-type: application/json
     "author": "TestAuthor2",
     "url": "TestURL",
     "likes": 100
+}
+
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{   "title": "TestTitle",
+    "author": "TestAuthor2",
+    "url": "TestURL",
+    "likes": 100,
+    "userId": "6491024a8900a62c1f09054c"
+}
+
+###
+POST  http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+    "username": "test",
+    "name": "Superuser",
+    "password": "hiaa"
 }
