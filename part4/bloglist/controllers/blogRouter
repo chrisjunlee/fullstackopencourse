@@ -1,6 +1,7 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 blogRouter.get('/', async (request, response) => {
     const blogs = await Blog
@@ -29,9 +30,14 @@ blogRouter.post('/', async (request, response) => {
 
     const body = request.body
 
-    const user = body.userId? 
-        await User.findById(body.userId) : 
-        await User.findOne({})
+    const decodedToken = 
+        jwt.verify(request.token, process.env.TOKEN_SECRET)
+
+    if (!decodedToken.id) {
+        return response.status(401).json({ error: 'token invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
     
     const blog = new Blog({
         title: body.title,
@@ -55,9 +61,34 @@ blogRouter.delete('/:id', async (req, res) => {
         res.status(204).end()
     }
 
-    console.log('Deleting:', req.params.id)
-    await Blog.findByIdAndDelete(req.params.id)
-    res.status(204).end()
+    if (!req.token) {
+        return res.status(400).json({error: "Must provide Token for delete"})
+    }
+
+    const decodedToken =
+        jwt.verify(req.token, process.env.TOKEN_SECRET)
+
+    if (!decodedToken.id) {
+        return res.status(401).json({ error: 'token invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+
+    // checking blog belongs to user
+    const blog = await Blog.findById(req.params.id)
+
+    console.log('token owner:', user.id, user.username)
+    console.log('blog', blog)
+    console.log('blog owner', blog.user.toString())
+
+    if( blog.user.toString() == user.id.toString()) {
+        await Blog.findByIdAndDelete(req.params.id)
+        res.status(204).end()
+    }
+    else {
+        return res.status(400).json({ error: "Blog does not belong to user" })
+    }
+    
 })
 
 blogRouter.put('/:id', async (req, res) => {

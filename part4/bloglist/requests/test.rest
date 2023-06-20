@@ -2,9 +2,6 @@ GET http://localhost:3003/api/blogs
 ###
 GET http://localhost:3003/api/users 
 ###
-GET http://localhost:3003/api/blogs/648e6a1e029ebac163c27823
-
-###
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
 
@@ -15,25 +12,8 @@ content-type: application/json
 }
 
 ###
-DELETE http://localhost:3003/api/blogs/nuke HTTP/1.1
-
-###
-PUT http://localhost:3003/api/blogs/648e6a1e029ebac163c27823 HTTP/1.1
-content-type: application/json
-
-{   "title": "newTitle"
-}
-
-###
-POST http://localhost:3003/api/blogs HTTP/1.1
-content-type: application/json
-
-{
-    "author": "TestAuthor2",
-    "url": "TestURL",
-    "likes": 100
-}
-
+DELETE http://localhost:3003/api/blogs/64914395b58209e0b51c5164 HTTP/1.1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2NDkxNDAzZTMzODU5NjFmYTFmYWJmN2QiLCJpYXQiOjE2ODcyNDA5NzJ9.jVXWvxtne40PFqoWf2YIJWoZW4eH-AdrOkd4BcEl-mA
 ###
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
@@ -50,7 +30,29 @@ POST  http://localhost:3003/api/users HTTP/1.1
 content-type: application/json
 
 {
-    "username": "test",
+    "username": "user1",
     "name": "Superuser",
-    "password": "hiaa"
+    "password": "pass1"
+}
+
+### token login test
+POST http://localhost:3003/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "user1",
+    "password": "pass1"
+}
+
+### token post test
+POST http://localhost:3003/api/blogs HTTP/1.1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2NDkxNDAzZTMzODU5NjFmYTFmYWJmN2QiLCJpYXQiOjE2ODcyNDA5NzJ9.jVXWvxtne40PFqoWf2YIJWoZW4eH-AdrOkd4BcEl-mA
+content-type: application/json
+
+{   
+    "title": "TokenBlog",
+    "author": "aoeu",
+    "url": "aoeu",
+    "likes": 100,
+    "userId": "6491403e3385961fa1fabf7dc"
 }
