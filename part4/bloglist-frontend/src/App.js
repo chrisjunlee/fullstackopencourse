@@ -108,7 +108,7 @@ const App = () => {
 
   const blogsForm = () => (
     <>
-      <Blogs blogs={blogs.filter(blog => blog.user.username == user.username)} user={user}/>
+      <Blogs blogs={blogs.filter(blog => blog.user.username == user.username).sort((a,b) => a.likes < b.likes? 1 : -1)} user={user}/>
       <br/>
       <Togglable buttonLabel="Create" buttonLabelCancel="Cancel" ref={blogFormRef}>
         <NewBlogForm title={newTitle} author={newAuthor} url={newUrl} 
@@ -131,7 +131,7 @@ const App = () => {
 
     return (
       <>
-        <div style={{'font-size':'2em'}}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
+        <div style={{'fontSize':'2em'}}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
         {blogs.map(b =>
           <div key={b.id} style={blogStyle}>
           {b.title} :: {b.author}
