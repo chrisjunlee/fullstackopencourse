@@ -1,12 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Notification from "./components/Notification";
 import './App.css'
 import blogService from "./services/blogs"
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import Togglable from "./components/Togglable";
+import NewBlogForm from './components/NewBlogForm'
 
 const App = () => {
   const USER_LOCALSTORAGE_KEY = "loggedBlogUser"
   const [blogs, setBlogs] = useState([]) 
+  const blogFormRef = useRef(null)
   
   // new blog usestates
   const [newTitle, setNewTitle] = useState('')
@@ -66,66 +70,82 @@ const App = () => {
     const blogObj = {title: newTitle, author: newAuthor, url: newUrl}
 
     blogService.setToken(user.token)
-
     const savedBlog = await blogService.create(blogObj)
     setBlogs(blogs.concat(savedBlog))
     setNewAuthor('')
     setNewTitle('')
     setNewUrl('')
+
+    blogFormRef.current.toggleVisibility()
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        Username: 
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        Password: 
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-  )
+  const handleDeleteBlog = async (blogId) => {
+    blogService.setToken(user.token)
+    await blogService.deleteById(blogId)
+    setBlogs(blogs.filter(blog => blog.id !== blogId))
+  }
+
+  const handleLike = async (blogObj) => {
+    blogService.setToken(user.token)
+    const savedBlog = await blogService.like(blogObj)
+    console.log('blogs', blogs)
+    console.log('savedBlog', savedBlog)
+    // not using the response object since user isn't returned correctly
+    setBlogs(blogs.map(b => b.id === savedBlog.id? {...b, likes: savedBlog.likes} : b ))
+  }
+
+  const loginForm = () => {
+    return (
+      <LoginForm
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleSubmit={handleLogin}
+      />
+    )}
+  
 
   const blogsForm = () => (
     <>
-    <Blogs blogs={blogs.filter(blog => blog.user.username == user.username)} user={user}/>
-    {/* NewBlog is defined here instead of separate component to prevent input focus loss bug: 
-    https://stackoverflow.com/questions/59715158/react-hooks-input-loses-focus-when-1-character-is-typed-in */}
-      <form>
-        <div>Title: <input value={newTitle} onChange={({ target }) => setNewTitle(target.value)} /></div>
-        <div>Author: <input value={newAuthor} onChange={({ target }) => setNewAuthor(target.value)} /></div>
-        <div>Url: <input value={newUrl} onChange={({ target }) => setNewUrl(target.value)} /></div>
-        <div><button type="submit" onClick={handleBlogSave}>add</button></div>
-      </form>
+      <Blogs blogs={blogs.filter(blog => blog.user.username == user.username)} user={user}/>
+      <br/>
+      <Togglable buttonLabel="Create" buttonLabelCancel="Cancel" ref={blogFormRef}>
+        <NewBlogForm title={newTitle} author={newAuthor} url={newUrl} 
+          handleAuthorChange={({ target }) => setNewAuthor(target.value)}
+          handleTitleChange={({ target }) => setNewTitle(target.value)}
+          handleUrlChange={({ target }) => setNewUrl(target.value)} 
+          handleSubmit={handleBlogSave}/>
+      </Togglable>
     </>
   )
 
-  const Blogs = ({ blogs, user }) =>
-    <>
-      <div style={{'font-size':'2em'}}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
-      <table><tbody>
-        {blogs.map(b =>
-          <tr>
-            <td>Title: {b.title}</td>
-            <td>Author: {b.author}</td>
-          </tr>)}
-      </tbody></table>
-      <div>
+  const Blogs = ({ blogs, user }) =>{
+    const blogStyle = {
+      paddingTop: 10,
+      paddingLeft: 2,
+      border: 'solid',
+      borderWidth: 1,
+      marginBottom: 5
+    }
 
-      </div>
-    </>
+    return (
+      <>
+        <div style={{'font-size':'2em'}}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
+        {blogs.map(b =>
+          <div key={b.id} style={blogStyle}>
+          {b.title} :: {b.author}
+          <button onClick={() => handleDeleteBlog(b.id)}>DELETE</button>
+          <Togglable buttonLabel="View" buttonLabelCancel="Hide">
+          <div>{b.url} <br/>
+          {b.likes} <button onClick={() => handleLike(b)}>Like</button><br/>
+          {b.user.username}</div>
+          </Togglable>
+          </div>
+        )}
+      </>
+    )
+  }
 
   return (
     <div>

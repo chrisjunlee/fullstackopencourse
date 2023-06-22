@@ -16,6 +16,23 @@ const create = async newObj => {
   return response.data
 }
 
+const like = async blogObj => {
+  const config = { headers: { Authorization: token } }
+
+  // {...blogObj, } causes CastError: Cast to ObjectId failed for value
+  const updatedBlog = {author: blogObj.author, title: blogObj.title, url: blogObj.url, likes: blogObj.likes + 1 }
+  console.log('updatedBlog', updatedBlog)
+  const response = await axios.put(`${baseUrl}/${blogObj.id}`, updatedBlog, config)
+  return response.data
+}
+
+const deleteById = async id => {
+  const config = { headers: { Authorization: token } }
+  console.log('deleting', id, config)
+  const response = await axios.delete(`${baseUrl}/${id}`, config)
+  return response.data
+}
+
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, setToken }
+export default { getAll, create, deleteById, like, setToken }
