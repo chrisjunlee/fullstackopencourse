@@ -20,6 +20,7 @@ const LoginForm = ({
     </form>
   )}
 
+// eslint-disable-next-line react/no-typos
 LoginForm.PropTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleUsernameChange: PropTypes.func.isRequired,

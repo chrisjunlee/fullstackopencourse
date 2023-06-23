@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import Notification from "./components/Notification";
 import './App.css'
 import blogService from "./services/blogs"
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Togglable from "./components/Togglable";
 import NewBlogForm from './components/NewBlogForm'
+import Blogs from './components/Blogs'
 
 const App = () => {
   const USER_LOCALSTORAGE_KEY = "loggedBlogUser"
@@ -108,7 +108,9 @@ const App = () => {
 
   const blogsForm = () => (
     <>
-      <Blogs blogs={blogs.filter(blog => blog.user.username == user.username).sort((a,b) => a.likes < b.likes? 1 : -1)} user={user}/>
+      <div style={{ 'fontSize': '2em' }}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
+      <Blogs blogs={blogs.filter(blog => blog.user.username == user.username).sort((a,b) => a.likes < b.likes? 1 : -1)}
+        handleLike={handleLike} handleDeleteBlog={handleDeleteBlog}/>
       <br/>
       <Togglable buttonLabel="Create" buttonLabelCancel="Cancel" ref={blogFormRef}>
         <NewBlogForm title={newTitle} author={newAuthor} url={newUrl} 
@@ -119,33 +121,6 @@ const App = () => {
       </Togglable>
     </>
   )
-
-  const Blogs = ({ blogs, user }) =>{
-    const blogStyle = {
-      paddingTop: 10,
-      paddingLeft: 2,
-      border: 'solid',
-      borderWidth: 1,
-      marginBottom: 5
-    }
-
-    return (
-      <>
-        <div style={{'fontSize':'2em'}}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
-        {blogs.map(b =>
-          <div key={b.id} style={blogStyle}>
-          {b.title} :: {b.author}
-          <button onClick={() => handleDeleteBlog(b.id)}>DELETE</button>
-          <Togglable buttonLabel="View" buttonLabelCancel="Hide">
-          <div>{b.url} <br/>
-          {b.likes} <button onClick={() => handleLike(b)}>Like</button><br/>
-          {b.user.username}</div>
-          </Togglable>
-          </div>
-        )}
-      </>
-    )
-  }
 
   return (
     <div>
