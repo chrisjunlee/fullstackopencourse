@@ -12,12 +12,12 @@ const Blogs = ({ blogs, handleDeleteBlog, handleLike }) => {
     return (
         <>
             {blogs.map(b =>
-                <div key={b.id} style={blogStyle}>
+                <div key={b.id} class='blog' style={blogStyle}>
                     {b.title} :: {b.author}
                     <button onClick={() => handleDeleteBlog(b.id)}>DELETE</button>
                     <Togglable buttonLabel="View" buttonLabelCancel="Hide">
                         <div>{b.url} <br />
-                            {b.likes} <button onClick={() => handleLike(b)}>Like</button><br />
+                            Likes: {b.likes} <button id="likesButton" onClick={() => handleLike(b)}>Like</button><br />
                             {b.user.username}</div>
                     </Togglable>
                 </div>

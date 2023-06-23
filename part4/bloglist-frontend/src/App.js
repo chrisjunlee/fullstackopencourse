@@ -108,7 +108,7 @@ const App = () => {
 
   const blogsForm = () => (
     <>
-      <div style={{ 'fontSize': '2em' }}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
+      <div id="loggedinBanner" style={{ 'fontSize': '2em' }}>{user.username} logged in <button onClick={handleLogout}>Logout</button></div>
       <Blogs blogs={blogs.filter(blog => blog.user.username == user.username).sort((a,b) => a.likes < b.likes? 1 : -1)}
         handleLike={handleLike} handleDeleteBlog={handleDeleteBlog}/>
       <br/>
@@ -125,6 +125,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
+      {console.log('user', user)}
       <NotifyError message={errorMessage} />
       <NotifySuccess message={successMessage} />
       {user == null? loginForm() : blogsForm()}
