@@ -1,10 +1,9 @@
 import { useSelector, useDispatch } from "react-redux"
 import {vote, deleteById} from "../reducers/anecdoteReducer"
-import { setNotify, clearNotify, setNotification } from "../reducers/notificationReducer"
+import { setNotification } from "../reducers/notificationReducer"
 
 const AnecdoteList = () => {
     const dispatch = useDispatch()
-    const filterState = useSelector(({anec, filter}) => filter)
 
     const anecdotes = useSelector(({ anecdotes, filter}) =>
       anecdotes.filter((anecObj) =>
@@ -15,20 +14,22 @@ const AnecdoteList = () => {
     const voteHandler = async (id) => {
       dispatch(vote(id))
       dispatch(setNotification(`Voted for: ${id}`, 3))
-      // dispatch(setNotify(`Voted for: ${id}`))
-      // setTimeout(() => dispatch(clearNotify()), 4000)
     }
 
     const deleteHandler = async (id) => {
       dispatch(deleteById(id))
     }
 
+    const style = {
+      padding: 2
+    };
+
   return (
     <>
       {anecdotes
         .toSorted((a, b) => (a.votes < b.votes ? 1 : -1))
         .map((anecdote) => (
-          <div key={anecdote.id}>
+          <div key={anecdote.id} style={style} >
             <div>{anecdote.content}</div>
             <div>
               has {anecdote.votes}
