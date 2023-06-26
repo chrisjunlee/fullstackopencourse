@@ -11,9 +11,9 @@ const Notification = () => {
     borderWidth: 1,
     width: "fit-content",
     background: "WhiteSmoke",
-    'border-radius': '5px'
+    'borderRadius': '5px'
   };
-  
+
   return (
     <div style={style}>
       {msg}

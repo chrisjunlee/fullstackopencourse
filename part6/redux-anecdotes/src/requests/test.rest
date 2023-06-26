@@ -1,0 +1,71 @@
+GET http://localhost:3001/anecdotes HTTP/1.1
+
+###
+GET http://localhost:3003/api/users 
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{   "title": "TestTitlea",
+    "author": "TestAuthor2",
+    "url": "TestURL",
+    "likes": 100
+}
+
+###
+DELETE http://localhost:3003/api/blogs/64914395b58209e0b51c5164 HTTP/1.1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2NDkxNDAzZTMzODU5NjFmYTFmYWJmN2QiLCJpYXQiOjE2ODcyNDA5NzJ9.jVXWvxtne40PFqoWf2YIJWoZW4eH-AdrOkd4BcEl-mA
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{   "title": "TestTitle",
+    "author": "TestAuthor2",
+    "url": "TestURL",
+    "likes": 100,
+    "userId": "6491024a8900a62c1f09054c"
+}
+
+###
+POST  http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+    "username": "user2",
+    "name": "user2name",
+    "password": "pass1"
+}
+
+### token login test
+POST http://localhost:3003/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "user2",
+    "password": "pass1"
+}
+
+### token post test
+POST http://localhost:3003/api/blogs HTTP/1.1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2NDkxNDAzZTMzODU5NjFmYTFmYWJmN2QiLCJpYXQiOjE2ODcyNDA5NzJ9.jVXWvxtne40PFqoWf2YIJWoZW4eH-AdrOkd4BcEl-mA
+content-type: application/json
+
+{   
+    "title": "TokenBlog",
+    "author": "aoeu",
+    "url": "aoeu",
+    "likes": 100,
+    "userId": "6491403e3385961fa1fabf7dc"
+}
+
+### PUT/update
+PUT http://localhost:3003/api/blogs/6491439bb58209e0b51c5168 HTTP/1.1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2NDkxNDAzZTMzODU5NjFmYTFmYWJmN2QiLCJpYXQiOjE2ODcyNDA5NzJ9.jVXWvxtne40PFqoWf2YIJWoZW4eH-AdrOkd4BcEl-mA
+content-type: application/json
+
+{   
+    "title": "TokenBlogTest",
+    "author": "aoeu",
+    "url": "aoeu",
+    "likes": 203
+}
