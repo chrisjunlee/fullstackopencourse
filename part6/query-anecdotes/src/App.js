@@ -3,14 +3,21 @@ import Notification from './components/Notification'
 import { useQuery } from 'react-query'
 import { getAnecdotes, vote } from './requests'
 import { useMutation, useQueryClient } from "react-query";
+import { useContext } from 'react';
+import NotifyContext from './NotifyContext';
+
 
 const App = () => {
+  const [msg, dispatch] = useContext(NotifyContext);
+
   const queryClient = useQueryClient()
   const voteMutation = useMutation(vote, {
     onSuccess: () => { queryClient.invalidateQueries('anecdotes')}
   })
 
   const handleVote = (anecdote) => {
+    const msg = anecdote.content.substring(0, Math.min(20, anecdote.content.length))
+    dispatch({ type: "SET", payload: `Voted for: ${msg}: ${anecdote.votes}` });
     console.log('anecdote', anecdote)
     voteMutation.mutate(anecdote)
   }
