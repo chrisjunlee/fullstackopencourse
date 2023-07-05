@@ -2,6 +2,21 @@ const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { v1: uuid } = require("uuid");
 
+// env
+const config = require("./utils/config");
+const MONGO_URL = config.MONGODB_URI;
+
+// database 
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const Book = require('./models/Book')
+const Author = require('./models/Author')
+
+mongoose
+  .connect(MONGO_URL)
+  .then(() => { console.log("connected to MongoDB"); })
+  .catch((error) => { console.log("error connecting MongoDB:", error.message)});
+
 let authors = [
   {
     name: "Robert Martin",
@@ -27,7 +42,6 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ];
-
 
 let books = [
   {
@@ -90,9 +104,10 @@ const typeDefs = `
 
   type Book {
     title: String!,
-    author: String!,
+    author: Author!,
     published: Int!,
-    genres: [String!]! 
+    genres: [String!]!,
+    id: ID!
   }
 
   type Query {
@@ -108,7 +123,7 @@ const typeDefs = `
       author: String!,
       published: Int!,
       genres: [String]!
-    ): Book,
+    ): Book!,
     editAuthor(
       name: String!,
       setBornTo: Int!
@@ -118,23 +133,10 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, {name, genre}) => {
-      let retVal = books
-      
-      if(name) {
-        retVal = retVal.filter(book => book.author.toLowerCase() == name.toLowerCase())
-      }
-
-      console.log('genre', genre)
-      if(genre) {
-        retVal = retVal.filter(book => book.genres.filter(g => g == genre).length > 0)
-      }
-
-      return retVal
-    },
-    allAuthors: () => authors
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => Book.find({}),
+    allAuthors: async () => Author.find({})
   },
   Author: {
     bookCount: (root) => {
@@ -143,27 +145,24 @@ const resolvers = {
   },
 
   Mutation: {
-    addBook: (root, args) => {
-      const book = {...args, id: uuid()}
-      books = books.concat(book)
+    addBook: async (root, args) => {
+      const authObj = await Author.findOne({name: args.author})
 
-      // author check
-      if(authors.filter(author => author.name === book.author).length === 0) {
-        const newAuthor = {name: book.author, bookCount: 1, born: null}
-        authors = authors.concat(newAuthor)
+      // args.author was passed in as a string, but Book.author requires Author object  
+      const book = new Book({...args, author: authObj})
+      return book.save()
+    },
+    editAuthor: async (root, {name, setBornTo}) => {
+      let result = await Author.findOne({name: name})
+
+      // create new
+      if(!result) {
+        const newAuthor = new Author( {name: name, born: setBornTo})
+        return newAuthor.save()
       }
 
-      return book
-    },
-    editAuthor: (root, {name, setBornTo}) => {
-      let authObj = authors.find(auth => auth.name === name)
-
-      if(authObj == undefined) {return null}
-
-      authObj = {...authObj, born: setBornTo}
-      authors = authors.map(auth => auth.id === authObj.id? authObj : auth)
-
-      return authObj
+      result = Author.findOneAndUpdate({name: name}, {born: setBornTo})
+      return result
     }
   }
 }
