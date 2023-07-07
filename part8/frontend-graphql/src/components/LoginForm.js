@@ -6,25 +6,28 @@ const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
     login(username: $username, password: $password) { value } }
 `
-const LoginForm = ({ setError, setToken }) => {
-const [username, setUsername] = useState('')
-const [password, setPassword] = useState('')
+const LoginForm = ({ show, setError, setToken, setPage }) => {
+  const [username, setUsername] = useState('u00')
+  const [password, setPassword] = useState('1')
 
-const [login, result] = useMutation(LOGIN, {
-  onError: (error) => {
-    console.log("errorLogin", error);
-    setError(error.graphQLErrors[0].message);
-  },
-});
-
-useEffect(() => {
-    console.log('result0', result)
-    if ( result.data ) {
-      console.log('result', result)
-      const token = result.data.login.value
-      setToken(token)
-      localStorage.setItem('library-user-token', token)
+  const [login, result] = useMutation(LOGIN, {
+    onError: (error) => {
+      console.log("errorLogin", error);
+      setError(error.graphQLErrors[0].message);
+    },
+    onCompleted: () => {
+      setPage("authors");
     }
+  });
+
+  useEffect(() => {
+      console.log('result0', result)
+      if ( result.data ) {
+        console.log('result', result)
+        const token = result.data.login.value
+        setToken(token)
+        localStorage.setItem('library-user-token', token)
+      }
   }, [result.data]) // eslint-disable-line
 
   const submit = async (event) => {
@@ -33,6 +36,7 @@ useEffect(() => {
 
   }
 
+  if (!show) { return null; }
   return (
     <div>
       <form onSubmit={submit}>

@@ -3,10 +3,11 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
 import { useApolloClient } from '@apollo/client'
 
 const App = () => {
-  const [page, setPage] = useState('authors')
+  const [page, setPage] = useState('login')
   const [errorMessage, setErrorMessage] = useState(null);
 
   // user login management
@@ -22,30 +23,18 @@ const App = () => {
     client.resetStore();
   };
 
-  // login
-  // if (!token) {
-  //   return (
-  //     <div>
-  //       <h2>Login</h2>
-  //       <div>{errorMessage}</div>
-  //       <LoginForm setToken={setToken} setError={setErrorMessage}/>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div>
-      <div>
+      <div style={{visibility: page !== 'login'? "visible" : "hidden"}} >
+        <Notification message={errorMessage}/>
         <button onClick={logout}>logout</button>
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         <button onClick={() => setPage("add")}>add book</button>
       </div>
-
+      <LoginForm show={page === "login"} setToken={setToken} setPage={setPage} setError={setErrorMessage}/>
       <Authors show={page === "authors"} />
-
       <Books show={page === "books"} />
-
       <NewBook show={page === "add"} />
     </div>
   );
