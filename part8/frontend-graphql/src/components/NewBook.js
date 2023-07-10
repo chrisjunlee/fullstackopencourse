@@ -9,11 +9,32 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const ADD_BOOK = gql`
-    mutation addBook($title: String!, $published: Int!, $author: String!, $genres: [String!]!) {
-      addBook(title: $title, author: $author, published: $published, genres: $genres) { title author published }
+    mutation addBook(
+      $title: String!
+      $published: Int!
+      $author: String!
+      $genres: [String!]!
+    ) {
+      addBook(
+        title: $title
+        author: $author
+        published: $published
+        genres: $genres
+      ) {
+        title
+        author {
+          name
+          born
+          bookCount
+        }
+        published
+      }
     }
   `;
-  const ALL_BOOKS = gql`query { allBooks { title author published genres } } `;
+
+  const AUTHOR_DETAILS = gql`fragment AuthorDetails on Author {name born bookCount}`
+  const ALL_BOOKS = gql`query { allBooks { title author {...AuthorDetails} published genres } }${AUTHOR_DETAILS}`;
+
   const [addBook, {data}] = useMutation(ADD_BOOK, { refetchQueries: [{query: ALL_BOOKS}] })
 
   const submit = async (event) => {

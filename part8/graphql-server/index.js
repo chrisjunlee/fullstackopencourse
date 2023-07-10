@@ -120,7 +120,7 @@ const typeDefs = `
 
   type Book {
     title: String!,
-    author: Author!,
+    author: Author,
     published: Int!,
     genres: [String!]!,
     id: ID!
@@ -176,7 +176,12 @@ const resolvers = {
     addBook: async (root, args, context) => {
       if (!context) return null;
 
-      const authObj = await Author.findOne({ name: args.author });
+      let authObj = await Author.findOne({ name: args.author });
+
+      // create new author 
+      if(!authObj) {
+        authObj = await new Author({name: args.author})
+      }
 
       // args.author was passed in as a string, but Book.author requires Author object
       const book = new Book({ ...args, author: authObj });
