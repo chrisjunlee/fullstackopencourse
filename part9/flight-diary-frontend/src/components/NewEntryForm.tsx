@@ -13,11 +13,24 @@ const NewEntryForm = (props: NewEntryFormProps) => {
   return (
   <div>
     <form>
-      <div> Weather: 
-        <input value={newWeather} onChange={(event) => {setNewWeather(event.target.value)}}/>
+      <div> 
+        <label htmlFor='weather'>Weather: </label>
+        <select name='weather' onChange={(event) => {setNewWeather(event.target.value)}}>
+          <option value="sunny">sunny</option>
+          <option value="rainy">rainy</option>
+          <option value="cloudy">cloudy</option>
+          <option value="stormy">stormy</option>
+          <option value="windy">windy</option>
+        </select>
       </div>
-      <div> Visibility: 
-        <input value={newVisibility} onChange={(event) => {setNewVisibility(event.target.value)}}/>
+      <div>
+        <label htmlFor="visibility">Visibility:</label>
+        <select name="visibility" onChange={(event) => {setNewVisibility(event.target.value)}}>
+          <option value="great">great</option>
+          <option value="good">good</option>
+          <option value="ok">ok</option>
+          <option value="poor">poor</option>
+        </select>
       </div>
       <div> Date: 
         <input value={newDate} type="date" onChange={(event) => {setNewDate(event.target.value)}}/>
