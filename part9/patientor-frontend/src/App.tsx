@@ -4,15 +4,22 @@ import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import { Button, Divider, Container, Typography } from '@mui/material';
 
 import { apiBaseUrl } from "./constants";
-import { Patient } from "./types";
+import { Diagnosis, Patient } from "./types";
 
 import patientService from "./services/patients";
 import PatientListPage from "./components/PatientListPage";
 import PatientPage from "./components/PatientPage";
+import diagnoseService from "./services/diagnoses";
+
+// Context to share diagnosis state
+import { useContext } from "react";
+import {DiagnosisContext} from './DiagnoseContext'
 
 
 const App = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [diagnosisCodes, setDiagnosisCodes] = useContext(DiagnosisContext);
 
   useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
@@ -23,6 +30,18 @@ const App = () => {
     };
     void fetchPatientList();
   }, []);
+
+  useEffect(() => {
+    void axios.get<void>(`${apiBaseUrl}/ping`);
+
+    const fetchDiagnoses = async () => {
+      const diagnoses = await diagnoseService.getAll();
+      setDiagnosisCodes(diagnoses);
+      console.log('APP diagnosisCodes', diagnosisCodes )
+    };
+    void fetchDiagnoses();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [diagnosisCodes?.length]);
   
   return (
     <div className="App">
