@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import Hospital from './Hospital'
 import HealthCheck from './HealthCheck'
 import OccupationalHealthcare from './OccupationalHealthcare'
+import {Man, Woman} from '@mui/icons-material';
 
 interface Props {
   patients: Patient[]
@@ -16,27 +17,11 @@ const PatientPage = (props: Props) => {
 
   return (
     <div>
-      <h2>{patient.name}</h2>
+      <h2>{patient.name} {patient.gender === "male"? <Man/> : <Woman/>} </h2>
       Occupation: {patient.occupation} <br/><br/>
       {patient.entries.map(entry => <EntryDetails entry={entry}/> )}
     </div>)
 }
-
-
-// const Entries = (props: EntriesProps) => {
-//   const entries = props.entries
-//   return {entries.map(entry => <EntryDetails entry={entry}/>)}
-//   // return (<>
-//   //   {entries.map((ent, index) => (
-//   //     <div key={index}>
-//   //       {ent.date} {ent.description} <br/>
-//   //       <ul>
-//   //       {ent.diagnosisCodes? ent.diagnosisCodes.map((dCode, index) => <li key={index}>{dCode}</li>) : null }
-//   //       </ul>
-//   //     </div>
-//   //     ))}
-//   // </>)
-// }
 
 interface EntryDetailsProps { entry: Entry }
 
@@ -51,7 +36,7 @@ const EntryDetails = (props: EntryDetailsProps) => {
     case "HealthCheck":
       return <HealthCheck entry={entry} />
     default:
-      return assertNever(entry)
+      return assertNever(entry);
   }
 }
 
